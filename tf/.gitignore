@@ -1,5 +1,6 @@
 bin/
 creds.sh
+dhparam.pem
 downloads/
 *.terraform
 *tfstate*

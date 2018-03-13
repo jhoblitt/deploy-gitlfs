@@ -12,7 +12,7 @@ TF_HELM_BIN := $(TF_PLUG_DIR)/terraform-provider-helm
 
 .PHONY: all tf fmt clean
 
-all: $(TF_BIN) $(TF_HELM_BIN)
+all: $(TF_BIN) $(TF_HELM_BIN) dhparam.pem
 
 # $< may not be defined because of |
 $(TF_BIN): | $(DL_DIR)/$(TF_ZIP_FILE)
@@ -37,3 +37,7 @@ fmt:
 
 clean:
 	-rm -rf bin $(TF_HELM_BIN)
+
+# do not cleaning up by default
+dhparam.pem:
+	openssl dhparam -out $@ 2048
