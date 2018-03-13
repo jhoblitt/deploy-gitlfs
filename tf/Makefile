@@ -12,7 +12,7 @@ TF_HELM_BIN := $(TF_PLUG_DIR)/terraform-provider-helm
 
 .PHONY: all tf fmt clean
 
-all: $(TF_BIN) $(TF_HELM_BIN) dhparam.pem
+all: $(TF_BIN) $(TF_HELM_BIN) dhparam.pem lsst-certs
 
 # $< may not be defined because of |
 $(TF_BIN): | $(DL_DIR)/$(TF_ZIP_FILE)
@@ -30,13 +30,16 @@ $(DL_DIR)/$(TF_HELM_ZIP_FILE): | $(TF_PLUG_DIR)
 $(BIN_DIR) $(DL_DIR) $(TF_PLUG_DIR):
 	mkdir -p $@
 
+lsst-certs:
+	git clone ~/Dropbox/lsst-sqre/git/lsst-certs.git/ lsst-certs
+
 tf := $(wildcard *.tf)
 
 fmt:
 	$(foreach src, $(tf), $(BIN_DIR)/terraform fmt $(src);)
 
 clean:
-	-rm -rf bin $(TF_HELM_BIN)
+	-rm -rf bin $(TF_HELM_BIN) lsst-certs
 
 # do not cleaning up by default
 dhparam.pem:
