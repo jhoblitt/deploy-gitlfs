@@ -1,0 +1,29 @@
+os: linux
+matrix:
+  include:
+    - env: TEST=terraform
+      # it would be nice to use the docker hashicorp/terraform:0.11.3 image
+      # here but the helm provider installation would still need to be scripted
+      script: |
+        set -e
+        cd tf
+        make
+        ./bin/terraform fmt --check=true
+        ./bin/terraform validate --check-variables=false
+    - env: TEST=shellcheck
+      services:
+        - docker
+      script: |
+        set -e
+        find -name '*.sh' | xargs docker run -v $(pwd):$(pwd) -w $(pwd) koalaman/shellcheck-alpine:v0.4.6
+    - env: TEST=make
+      script: |
+        set -e
+        cd tf
+        make --warn-undefined-variables
+        make --dry-run
+branches:
+  only:
+  - master
+notifications:
+  email: false
