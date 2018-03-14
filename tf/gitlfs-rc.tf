@@ -82,7 +82,40 @@ resource "kubernetes_replication_controller" "gitlfs" {
             }
           }
         }
+
+        volume_mount {
+          name       = "nginx-logs"
+          mount_path = "/var/log/nginx"
+        }
       } # container
+
+      # https://kubernetes.io/docs/concepts/cluster-administration/logging/#streaming-sidecar-container
+      container {
+        name  = "gitlfs-nginx-access"
+        image = "busybox"
+        args  = ["/bin/sh", "-c", "tail -n+1 -f /var/log/nginx/access.log"]
+
+        volume_mount {
+          name       = "nginx-logs"
+          mount_path = "/var/log/nginx"
+        }
+      } # container
+
+      container {
+        name  = "gitlfs-nginx-error"
+        image = "busybox"
+        args  = ["/bin/sh", "-c", "tail -n+1 -f /var/log/nginx/error.log"]
+
+        volume_mount {
+          name       = "nginx-logs"
+          mount_path = "/var/log/nginx"
+        }
+      } # container
+
+      volume {
+        name      = "nginx-logs"
+        empty_dir = {}
+      }
     } # template
   } # spec
 }
