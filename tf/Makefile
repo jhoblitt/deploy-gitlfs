@@ -16,6 +16,7 @@ TF_HELM_BIN := $(TF_PLUG_DIR)/terraform-provider-helm
 
 all: tf-install dhparam.pem lsst-certs
 tf-install: $(TF_BIN) $(TF_HELM_BIN)
+test: tf-test
 
 # $< may not be defined because of |
 $(TF_BIN): | $(TF_ZIP_DL)
@@ -33,11 +34,15 @@ $(TF_HELM_ZIP_DL): | $(TF_PLUG_DIR)
 $(BIN_DIR) $(DL_DIR) $(TF_PLUG_DIR):
 	mkdir -p $@
 
+tf-test: tf-install
+	$(TF_BIN) fmt --check=true --diff=true
+	$(TF_BIN) validate --check-variables=false
+
 lsst-certs:
 	git clone ~/Dropbox/lsst-sqre/git/lsst-certs.git/ lsst-certs
 
 fmt:
-	$(foreach src, $(wildcard *.tf), $(BIN_DIR)/terraform fmt $(src);)
+	$(foreach src, $(wildcard *.tf), $(TF_BIN) fmt $(src);)
 
 clean:
 	-rm -rf bin $(TF_HELM_BIN) lsst-certs
@@ -46,4 +51,4 @@ clean:
 dhparam.pem:
 	openssl dhparam -out $@ 2048
 
-.PHONY: all tf-install fmt clean
+.PHONY: all tf-install tf-test test fmt clean
