@@ -14,7 +14,8 @@ TF_HELM_ZIP_FILE := terraform-provider-helm_$(TF_HELM_VER)_$(UNAME)_$(ARCH).tar.
 TF_HELM_ZIP_DL := $(DL_DIR)/$(TF_HELM_ZIP_FILE)
 TF_HELM_BIN := $(TF_PLUG_DIR)/terraform-provider-helm
 
-all: $(TF_BIN) $(TF_HELM_BIN) dhparam.pem lsst-certs
+all: tf-install dhparam.pem lsst-certs
+tf-install: $(TF_BIN) $(TF_HELM_BIN)
 
 # $< may not be defined because of |
 $(TF_BIN): | $(TF_ZIP_DL)
@@ -45,4 +46,4 @@ clean:
 dhparam.pem:
 	openssl dhparam -out $@ 2048
 
-.PHONY: all fmt clean
+.PHONY: all tf-install fmt clean
