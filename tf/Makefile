@@ -14,8 +14,6 @@ TF_HELM_ZIP_FILE := terraform-provider-helm_$(TF_HELM_VER)_$(UNAME)_$(ARCH).tar.
 TF_HELM_ZIP_DL := $(DL_DIR)/$(TF_HELM_ZIP_FILE)
 TF_HELM_BIN := $(TF_PLUG_DIR)/terraform-provider-helm
 
-.PHONY: all tf fmt clean
-
 all: $(TF_BIN) $(TF_HELM_BIN) dhparam.pem lsst-certs
 
 # $< may not be defined because of |
@@ -37,10 +35,8 @@ $(BIN_DIR) $(DL_DIR) $(TF_PLUG_DIR):
 lsst-certs:
 	git clone ~/Dropbox/lsst-sqre/git/lsst-certs.git/ lsst-certs
 
-tf := $(wildcard *.tf)
-
 fmt:
-	$(foreach src, $(tf), $(BIN_DIR)/terraform fmt $(src);)
+	$(foreach src, $(wildcard *.tf), $(BIN_DIR)/terraform fmt $(src);)
 
 clean:
 	-rm -rf bin $(TF_HELM_BIN) lsst-certs
@@ -48,3 +44,5 @@ clean:
 # do not cleaning up by default
 dhparam.pem:
 	openssl dhparam -out $@ 2048
+
+.PHONY: all fmt clean
