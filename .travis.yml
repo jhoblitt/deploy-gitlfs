@@ -7,9 +7,7 @@ matrix:
       script: |
         set -e
         cd tf
-        make
-        ./bin/terraform fmt --check=true
-        ./bin/terraform validate --check-variables=false
+        make test
     - env: TEST=shellcheck
       services:
         - docker
