@@ -41,7 +41,7 @@ tf-test: tf-install
 lsst-certs:
 	git clone ~/Dropbox/lsst-sqre/git/lsst-certs.git/ lsst-certs
 
-fmt:
+tf-fmt:
 	$(foreach src, $(wildcard *.tf), $(TF_BIN) fmt $(src);)
 
 clean:
