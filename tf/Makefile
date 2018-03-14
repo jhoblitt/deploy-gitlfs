@@ -25,7 +25,7 @@ $(TF_BIN): | $(TF_ZIP_DL)
 $(TF_ZIP_DL): | $(DL_DIR)
 	wget -nc https://releases.hashicorp.com/terraform/$(TF_VER)/$(TF_ZIP_FILE) -O $@
 
-$(TF_HELM_BIN): | $(TF_HELM_DL)
+$(TF_HELM_BIN): | $(TF_HELM_ZIP_DL)
 	tar -x -C $(TF_PLUG_DIR) --strip-components=1 -f $(DL_DIR)/$(TF_HELM_ZIP_FILE)
 
 $(TF_HELM_ZIP_DL): | $(TF_PLUG_DIR)
