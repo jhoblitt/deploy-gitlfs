@@ -7,21 +7,22 @@ matrix:
       script: |
         set -e
         cd tf
-        make
-        ./bin/terraform fmt --check=true
-        ./bin/terraform validate --check-variables=false
+        make test
     - env: TEST=shellcheck
       services:
         - docker
       script: |
         set -e
-        find -name '*.sh' | xargs docker run -v $(pwd):$(pwd) -w $(pwd) koalaman/shellcheck-alpine:v0.4.6
+        shopt -s globstar nullglob
+        SH=( **/*.sh )
+        [[ ${#SH[@]} -eq 0 ]] && exit
+        docker run -v $(pwd):$(pwd) -w $(pwd) \
+          koalaman/shellcheck-alpine:v0.4.6 -x "${SH[@]}"
     - env: TEST=make
       script: |
         set -e
         cd tf
-        make --warn-undefined-variables
-        make --dry-run
+        make --dry-run --warn-undefined-variables
 branches:
   only:
   - master
