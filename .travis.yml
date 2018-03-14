@@ -20,8 +20,7 @@ matrix:
       script: |
         set -e
         cd tf
-        make --warn-undefined-variables
-        make --dry-run
+        make --dry-run --warn-undefined-variables
 branches:
   only:
   - master
