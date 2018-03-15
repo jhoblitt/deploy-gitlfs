@@ -118,4 +118,7 @@ resource "kubernetes_replication_controller" "gitlfs" {
       }
     } # template
   } # spec
+
+  # attempt to avoid startup crashes due to missing env vars
+  depends_on = [ "kubernetes_secret.gitlfs" ]
 }
