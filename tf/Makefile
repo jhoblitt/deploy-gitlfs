@@ -40,7 +40,7 @@ tf-init: tf-install
 
 tf-test: tf-init
 	$(TF_BIN) fmt --check=true --diff=true
-	$(TF_BIN) validate
+	$(TF_BIN) validate --check-variables=false
 
 lsst-certs:
 	git clone ~/Dropbox/lsst-sqre/git/lsst-certs.git/ lsst-certs
