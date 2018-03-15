@@ -120,5 +120,5 @@ resource "kubernetes_replication_controller" "gitlfs" {
   } # spec
 
   # attempt to avoid startup crashes due to missing env vars
-  depends_on = [ "kubernetes_secret.gitlfs" ]
+  depends_on = ["kubernetes_secret.gitlfs"]
 }

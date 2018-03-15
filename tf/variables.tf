@@ -40,3 +40,7 @@ variable "service_name" {
 data "template_file" "fqdn" {
   template = "${replace("${var.env_name}-${var.service_name}.${var.domain_name}", "prod-", "")}"
 }
+
+variable "google_project" {
+  default = "plasma-geode-127520"
+}
