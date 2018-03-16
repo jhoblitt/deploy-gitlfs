@@ -119,6 +119,16 @@ resource "kubernetes_replication_controller" "gitlfs" {
     } # template
   } # spec
 
-  # attempt to avoid startup crashes due to missing env vars
-  depends_on = ["kubernetes_secret.gitlfs"]
+  depends_on = [
+    # attempt to avoid startup crashes due to missing env vars
+    "kubernetes_secret.gitlfs",
+
+    # ensure that REDIS_* env vars are present
+    "helm_release.redis",
+
+    # not strictly required as this dep is implicit via
+    # kubernetes_secret.gitlfs, this is essentially a reminder that this dep
+    # exists
+    "aws_s3_bucket.lfs_objects",
+  ]
 }

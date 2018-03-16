@@ -70,4 +70,6 @@ resource "kubernetes_replication_controller" "ssl_proxy" {
       }
     } # template
   } # spec
+
+  depends_on = ["kubernetes_secret.ssl_proxy"]
 }
