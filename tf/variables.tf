@@ -18,7 +18,6 @@ variable "aws_backup_region" {
 
 variable "env_name" {
   description = "AWS tag name to use on resources."
-  default     = "jhoblitt"
 }
 
 variable "aws_zone_id" {
