@@ -1,6 +1,6 @@
 output "GITLFS_FQDN" {
   sensitive = false
-  value     = "${aws_route53_record.lfs_www.fqdn}"
+  value     = "${data.template_file.fqdn.rendered}"
 }
 
 output "GITLFS_IP" {
