@@ -12,6 +12,6 @@ resource "kubernetes_secret" "gitlfs" {
     AWS_SECRET_ACCESS_KEY = "${module.lfs_user.secret}"
     AWS_REGION            = "${var.aws_default_region}"
     S3_BUCKET             = "${aws_s3_bucket.lfs_objects.id}"
-    LFS_SERVER_URL        = "https://${aws_route53_record.lfs_www.fqdn}"
+    LFS_SERVER_URL        = "https://${data.template_file.fqdn.rendered}"
   }
 }

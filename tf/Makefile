@@ -55,4 +55,15 @@ clean:
 dhparam.pem:
 	openssl dhparam -out $@ 2048
 
-.PHONY: all tf-install tf-test test fmt clean
+
+define OPT_TEMPLATE
+$(1): opt/$(1).tf
+	-cp $$< $(1).tf
+
+no$(1):
+	-rm $(1).tf
+endef
+
+$(eval $(call OPT_TEMPLATE,dns))
+
+.PHONY: all tf-install tf-test test fmt clean dns nodns

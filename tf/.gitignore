@@ -1,6 +1,7 @@
 bin/
 creds.sh
 dhparam.pem
+dns.tf
 downloads/
 lsst-certs/
 *.terraform
