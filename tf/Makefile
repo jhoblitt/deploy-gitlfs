@@ -87,12 +87,13 @@ dhparam.pem:
 
 define OPT_TEMPLATE
 .PHONY: $(1)
-$(1): opt/$(1).tf
-	-cp $$< $(1).tf
+$(1): opt/$(2).tf
+	-cp $$< $(2).tf
 
 .PHONY: no$(1)
 no$(1):
-	-rm $(1).tf
+	-rm $(2).tf
 endef
 
-$(eval $(call OPT_TEMPLATE,dns))
+$(eval $(call OPT_TEMPLATE,dns,dns))
+$(eval $(call OPT_TEMPLATE,nukes3,nukes3_override))
