@@ -14,6 +14,13 @@ TF_HELM_ZIP_FILE := terraform-provider-helm_$(TF_HELM_VER)_$(UNAME)_$(ARCH).tar.
 TF_HELM_ZIP_DL := $(DL_DIR)/$(TF_HELM_ZIP_FILE)
 TF_HELM_BIN := $(TF_PLUG_DIR)/terraform-provider-helm
 
+# these default values must be in sync with the definitions variables.tf
+TF_VAR_service_name ?= git-lfs
+TF_VAR_domain_name ?= lsst.codes
+AWS_DEFAULT_REGION ?= us-east-1
+FQDN := $(subst prod-,,$(TF_VAR_env_name)-$(TF_VAR_service_name).$(TF_VAR_domain_name))
+TF_S3_BCKT := $(FQDN)-tf
+
 all: tf-install dhparam.pem lsst-certs
 test: tf-test
 
@@ -35,8 +42,22 @@ $(BIN_DIR) $(DL_DIR) $(TF_PLUG_DIR):
 
 tf-install: $(TF_BIN) $(TF_HELM_BIN)
 
+tf-s3-mb:
+	aws s3 mb s3://$(TF_S3_BCKT) --region $(AWS_DEFAULT_REGION)
+
+tf-init-s3: tf-install tf-s3-mb
+	$(TF_BIN) init \
+		-backend=true \
+		-backend-config="region=$(AWS_DEFAULT_REGION)" \
+		-backend-config="bucket=$(TF_S3_BCKT)" \
+		-backend-config="key=gitlfs/terraform.tfstate" \
+		-input=false \
+		-get=true \
+		-reconfigure \
+		-force-copy
+
 tf-init: tf-install
-	$(TF_BIN) init
+	$(TF_BIN) init -backend=false
 
 tf-test: tf-init
 	$(TF_BIN) fmt --check=true --diff=true
