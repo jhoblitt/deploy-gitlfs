@@ -4,5 +4,6 @@ dhparam.pem
 dns.tf
 downloads/
 lsst-certs/
+nukes3_override.tf
 *.terraform
 *tfstate*
