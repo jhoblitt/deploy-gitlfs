@@ -15,7 +15,7 @@ provider "aws" {
 # a template is needed to stay DRY while avoiding circular references between
 # the object and log buckets
 data "template_file" "lfs_objects" {
-  template = "${replace("${var.env_name}-${var.service_name}-${var.aws_default_region}.${var.domain_name}", "prod-", "")}"
+  template = "${data.template_file.fqdn.rendered}-${var.aws_default_region}"
 }
 
 resource "aws_s3_bucket" "lfs_objects" {
@@ -67,7 +67,7 @@ resource "aws_s3_bucket" "lfs_objects_log" {
 #
 
 data "template_file" "lfs_objects_backup" {
-  template = "${replace("${var.env_name}-${var.service_name}-${var.aws_backup_region}.${var.domain_name}", "prod-", "")}"
+  template = "${data.template_file.fqdn.rendered}-${var.aws_backup_region}"
 }
 
 resource "aws_s3_bucket" "lfs_objects_backup" {
