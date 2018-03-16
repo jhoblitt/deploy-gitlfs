@@ -69,7 +69,6 @@ tf-test: tf-init
 	$(TF_BIN) fmt --check=true --diff=true
 	$(TF_BIN) validate --check-variables=false
 
-.PHONY: lsst-certs
 lsst-certs:
 	git clone ~/Dropbox/lsst-sqre/git/lsst-certs.git/ lsst-certs
 
