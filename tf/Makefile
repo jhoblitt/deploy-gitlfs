@@ -14,6 +14,14 @@ TF_HELM_ZIP_FILE := terraform-provider-helm_$(TF_HELM_VER)_$(UNAME)_$(ARCH).tar.
 TF_HELM_ZIP_DL := $(DL_DIR)/$(TF_HELM_ZIP_FILE)
 TF_HELM_BIN := $(TF_PLUG_DIR)/terraform-provider-helm
 
+# these default values must be in sync with the definitions variables.tf
+TF_VAR_service_name ?= git-lfs
+TF_VAR_domain_name ?= lsst.codes
+AWS_DEFAULT_REGION ?= us-east-1
+FQDN := $(subst prod-,,$(TF_VAR_env_name)-$(TF_VAR_service_name).$(TF_VAR_domain_name))
+TF_S3_BCKT := $(FQDN)-tf
+
+.PHONY: all test
 all: tf-install dhparam.pem lsst-certs
 test: tf-test
 
@@ -33,21 +41,43 @@ $(TF_HELM_ZIP_DL): | $(TF_PLUG_DIR)
 $(BIN_DIR) $(DL_DIR) $(TF_PLUG_DIR):
 	mkdir -p $@
 
+.PHONY: tf-install
 tf-install: $(TF_BIN) $(TF_HELM_BIN)
 
-tf-init: tf-install
-	$(TF_BIN) init
+.PHONY: tf-s3-mb
+tf-s3-mb:
+	aws s3 mb s3://$(TF_S3_BCKT) --region $(AWS_DEFAULT_REGION)
 
+.PHONY: tf-init-s3
+tf-init-s3: tf-install tf-s3-mb
+	$(TF_BIN) init \
+		-backend=true \
+		-backend-config="region=$(AWS_DEFAULT_REGION)" \
+		-backend-config="bucket=$(TF_S3_BCKT)" \
+		-backend-config="key=gitlfs/terraform.tfstate" \
+		-input=false \
+		-get=true \
+		-reconfigure \
+		-force-copy
+
+.PHONY: tf-init
+tf-init: tf-install
+	$(TF_BIN) init -backend=false
+
+.PHONY: tf-test
 tf-test: tf-init
 	$(TF_BIN) fmt --check=true --diff=true
 	$(TF_BIN) validate --check-variables=false
 
+.PHONY: lsst-certs
 lsst-certs:
 	git clone ~/Dropbox/lsst-sqre/git/lsst-certs.git/ lsst-certs
 
+.PHONY: tf-fmt
 tf-fmt:
 	$(foreach src, $(wildcard *.tf), $(TF_BIN) fmt $(src);)
 
+.PHONY: clean
 clean:
 	-rm -rf bin $(TF_HELM_BIN) lsst-certs
 
@@ -57,13 +87,13 @@ dhparam.pem:
 
 
 define OPT_TEMPLATE
+.PHONY: $(1)
 $(1): opt/$(1).tf
 	-cp $$< $(1).tf
 
+.PHONY: no$(1)
 no$(1):
 	-rm $(1).tf
 endef
 
 $(eval $(call OPT_TEMPLATE,dns))
-
-.PHONY: all tf-install tf-test test fmt clean dns nodns
