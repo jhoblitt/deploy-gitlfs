@@ -1,11 +1,14 @@
 provider "aws" {
-  region = "${var.aws_default_region}"
-  alias  = "primary"
+  version = "~> 1.21"
+  region  = "${var.aws_default_region}"
+  alias   = "primary"
 }
 
 provider "aws" {
-  region = "${var.aws_backup_region}"
-  alias  = "backup"
+  # providers are initialized early and can't use a local var to DRY version
+  version = "~> 1.21"
+  region  = "${var.aws_backup_region}"
+  alias   = "backup"
 }
 
 #
@@ -51,6 +54,11 @@ resource "aws_s3_bucket" "lfs_objects" {
   }
 
   force_destroy = false
+}
+
+resource "aws_s3_bucket_metric" "lfs_objects" {
+  bucket = "${aws_s3_bucket.lfs_objects.bucket}"
+  name   = "EntireBucket"
 }
 
 resource "aws_s3_bucket" "lfs_objects_log" {
@@ -108,6 +116,11 @@ resource "aws_s3_bucket" "lfs_objects_backup" {
   #}
 
   force_destroy = false
+}
+
+resource "aws_s3_bucket_metric" "lfs_objects_backup" {
+  bucket = "${aws_s3_bucket.lfs_objects_backup.bucket}"
+  name   = "EntireBucket"
 }
 
 resource "aws_s3_bucket" "lfs_objects_backup_log" {

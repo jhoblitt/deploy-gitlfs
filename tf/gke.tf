@@ -1,4 +1,6 @@
 provider "google" {
+  version = "~> 1.14"
+
   project = "${var.google_project}"
   region  = "us-central1"
   zone    = "us-central1-b"
