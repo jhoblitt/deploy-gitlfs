@@ -57,8 +57,9 @@ resource "aws_s3_bucket" "lfs_objects" {
 }
 
 resource "aws_s3_bucket_metric" "lfs_objects" {
-  bucket = "${aws_s3_bucket.lfs_objects.bucket}"
-  name   = "EntireBucket"
+  bucket   = "${aws_s3_bucket.lfs_objects.bucket}"
+  name     = "EntireBucket"
+  provider = "aws.primary"
 }
 
 resource "aws_s3_bucket" "lfs_objects_log" {
@@ -119,8 +120,9 @@ resource "aws_s3_bucket" "lfs_objects_backup" {
 }
 
 resource "aws_s3_bucket_metric" "lfs_objects_backup" {
-  bucket = "${aws_s3_bucket.lfs_objects_backup.bucket}"
-  name   = "EntireBucket"
+  bucket   = "${aws_s3_bucket.lfs_objects_backup.bucket}"
+  name     = "EntireBucket"
+  provider = "aws.backup"
 }
 
 resource "aws_s3_bucket" "lfs_objects_backup_log" {
