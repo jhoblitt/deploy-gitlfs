@@ -1,30 +1,40 @@
-os: linux
+---
+sudo: false
+language: c
 matrix:
   include:
-    - env: TEST=terraform
-      # it would be nice to use the docker hashicorp/terraform:0.11.3 image
-      # here but the helm provider installation would still need to be scripted
-      script: |
-        set -e
-        cd tf
-        make test
-    - env: TEST=shellcheck
+    - env: TEST=markdownlint
+      language: c
       services:
         - docker
-      script: |
-        set -e
-        shopt -s globstar nullglob
-        SH=( **/*.sh )
-        [[ ${#SH[@]} -eq 0 ]] && exit
-        docker run -v $(pwd):$(pwd) -w $(pwd) \
-          koalaman/shellcheck-alpine:v0.4.6 -x "${SH[@]}"
+      script: ./tests/mdl.sh
+
     - env: TEST=make
+      language: c
+      script: ./tests/make.sh
+
+    - env: TEST=terraform
+      language: c
       script: |
-        set -e
-        cd tf
-        make --dry-run --warn-undefined-variables
+       set -e
+       cd tf
+       make test
+
+    - env: TEST=yamllint
+      language: c
+      services:
+        - docker
+      script: ./tests/yamllint.sh
+
+    - env: TEST=shellcheck
+      language: c
+      services:
+        - docker
+      script: ./tests/shellcheck.sh
 branches:
   only:
-  - master
+    - master
+    # also matched against tag pushes
+    - /^\d+\.\d+\.\d+$/
 notifications:
   email: false
