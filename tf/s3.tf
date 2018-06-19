@@ -1,11 +1,14 @@
 provider "aws" {
-  region = "${var.aws_default_region}"
-  alias  = "primary"
+  version = "~> 1.21"
+  region  = "${var.aws_default_region}"
+  alias   = "primary"
 }
 
 provider "aws" {
-  region = "${var.aws_backup_region}"
-  alias  = "backup"
+  # providers are initialized early and can't use a local var to DRY version
+  version = "~> 1.21"
+  region  = "${var.aws_backup_region}"
+  alias   = "backup"
 }
 
 #
