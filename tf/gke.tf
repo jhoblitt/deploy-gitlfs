@@ -10,6 +10,7 @@ resource "google_container_cluster" "gitlfs" {
   name               = "${var.service_name}-${var.env_name}"
   initial_node_count = 3
   min_master_version = "1.9.4-gke.1"
+  enable_legacy_abac = true
 
   addons_config {
     http_load_balancing {
