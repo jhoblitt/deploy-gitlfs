@@ -56,6 +56,11 @@ resource "aws_s3_bucket" "lfs_objects" {
   force_destroy = false
 }
 
+resource "aws_s3_bucket_metric" "lfs_objects" {
+  bucket = "${aws_s3_bucket.lfs_objects.bucket}"
+  name   = "EntireBucket"
+}
+
 resource "aws_s3_bucket" "lfs_objects_log" {
   region   = "${var.aws_default_region}"
   bucket   = "${data.template_file.lfs_objects.rendered}-logs"
@@ -111,6 +116,11 @@ resource "aws_s3_bucket" "lfs_objects_backup" {
   #}
 
   force_destroy = false
+}
+
+resource "aws_s3_bucket_metric" "lfs_objects_backup" {
+  bucket = "${aws_s3_bucket.lfs_objects_backup.bucket}"
+  name   = "EntireBucket"
 }
 
 resource "aws_s3_bucket" "lfs_objects_backup_log" {
