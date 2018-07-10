@@ -11,6 +11,9 @@ provider "aws" {
   alias   = "backup"
 }
 
+# XXX
+# https://www.terraform.io/docs/providers/aws/r/cloudwatch_metric_alarm.html
+
 #
 # primary bucket
 #
@@ -69,6 +72,31 @@ resource "aws_s3_bucket" "lfs_objects_log" {
   acl      = "log-delivery-write"
 
   force_destroy = false
+}
+
+resource "aws_s3_bucket_policy" "lfs_objects" {
+  bucket = "${aws_s3_bucket.lfs_objects.id}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Restrict Access to Jenkins VPC",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": ["${aws_s3_bucket.lfs_objects.arn}",
+                   "${aws_s3_bucket.lfs_objects.arn}/*"],
+      "Condition": {
+        "StringNotEquals": {
+          "aws:sourceVpc": "vpc-14974a73"
+        }
+      }
+    }
+  ]
+}
+EOF
 }
 
 #
