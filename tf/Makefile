@@ -22,7 +22,7 @@ FQDN := $(subst prod-,,$(TF_VAR_env_name)-$(TF_VAR_service_name).$(TF_VAR_domain
 TF_S3_BCKT := $(FQDN)-tf
 
 .PHONY: all test
-all: tf-install dhparam.pem lsst-certs
+all: tf-install
 test: tf-test
 
 # $< may not be defined because of |
@@ -60,30 +60,45 @@ tf-init-s3: tf-install tf-s3-mb
 		-reconfigure \
 		-force-copy
 
+# XXX causes error looking for helm provider
+#-upgrade=true \
+
 .PHONY: tf-init
 tf-init: tf-install
-	$(TF_BIN) init -backend=false
+	$(TF_BIN) init \
+		-backend=false \
+		-get=true
+
+# XXX causes error looking for helm provider
+#-upgrade=true \
 
 .PHONY: tf-test
-tf-test: tf-init
-	$(TF_BIN) fmt --check=true --diff=true
-	$(TF_BIN) validate --check-variables=false
-
-lsst-certs:
-	git clone ~/Dropbox/lsst-sqre/git/lsst-certs.git/ lsst-certs
+tf-test: tf-init tf-fmt tf-validate
 
 .PHONY: tf-fmt
 tf-fmt:
-	$(foreach src, $(wildcard *.tf), $(TF_BIN) fmt $(src);)
+	$(TF_BIN) fmt --check=true --diff=true
 
-.PHONY: clean
-clean:
-	-rm -rf bin $(TF_HELM_BIN) lsst-certs
+.PHONY: tf-validate
+tf-validate:
+	$(TF_BIN) validate --check-variables=false
+
+.PHONY: tls
+tls: dhparam.pem lsst-certs
+
+tls-clean:
+	-rm -rf lsst-certs
+
+lsst-certs:
+	git clone ~/Dropbox/lsst-sqre/git/lsst-certs.git/ lsst-certs
 
 # do not cleaning up by default
 dhparam.pem:
 	openssl dhparam -out $@ 2048
 
+.PHONY: clean
+clean: tls-clean
+	-rm -rf $(BIN_DIR) $(TF_HELM_BIN)
 
 define OPT_TEMPLATE
 .PHONY: $(1)
