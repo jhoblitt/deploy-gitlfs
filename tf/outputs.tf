@@ -10,5 +10,5 @@ output "GITLFS_IP" {
 
 output "GOOGLE_CONTAINER_CLUSTER" {
   sensitive = false
-  value     = "${google_container_cluster.gitlfs.id}"
+  value     = "${module.gke.id}"
 }

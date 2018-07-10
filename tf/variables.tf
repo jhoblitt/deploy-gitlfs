@@ -35,11 +35,22 @@ variable "service_name" {
   default     = "git-lfs"
 }
 
+variable "deploy_name" {
+  description = "Name of deployment."
+  default     = "git-lfs"
+}
+
 # remove "<env>-" prefix for production
 data "template_file" "fqdn" {
   template = "${replace("${var.env_name}-${var.service_name}.${var.domain_name}", "prod-", "")}"
 }
 
 variable "google_project" {
-  default = "plasma-geode-127520"
+  description = "google cloud project ID"
+  default     = "plasma-geode-127520"
+}
+
+# Name of google cloud container cluster to deploy into
+data "template_file" "gke_cluster_name" {
+  template = "${var.deploy_name}-${var.env_name}"
 }
