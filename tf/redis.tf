@@ -18,15 +18,6 @@
 #
 # kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
 
-provider "helm" {
-  kubernetes {
-    host                   = "${module.gke.host}"
-    client_certificate     = "${base64decode(module.gke.client_certificate)}"
-    client_key             = "${base64decode(module.gke.client_key)}"
-    cluster_ca_certificate = "${base64decode(module.gke.cluster_ca_certificate)}"
-  }
-}
-
 resource "helm_release" "redis" {
   name      = "redis"
   chart     = "stable/redis"

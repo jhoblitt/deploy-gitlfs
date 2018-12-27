@@ -1,16 +1,3 @@
-provider "aws" {
-  version = "~> 1.21"
-  region  = "${var.aws_primary_region}"
-  alias   = "primary"
-}
-
-provider "aws" {
-  # providers are initialized early and can't use a local var to DRY version
-  version = "~> 1.21"
-  region  = "${var.aws_backup_region}"
-  alias   = "backup"
-}
-
 #
 # primary bucket
 #
