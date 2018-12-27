@@ -1,4 +1,4 @@
-variable "aws_default_region" {
+variable "aws_primary_region" {
   description = "Region for s3 bucket with lfs objects."
   default     = "us-east-1"
 }

@@ -1,6 +1,6 @@
 provider "aws" {
   version = "~> 1.21"
-  region  = "${var.aws_default_region}"
+  region  = "${var.aws_primary_region}"
   alias   = "primary"
 }
 
@@ -18,12 +18,12 @@ provider "aws" {
 # a local is needed to stay DRY while avoiding circular references between
 # the object and log buckets
 locals {
-  lfs_objects_bucket      = "${local.fqdn}-${var.aws_default_region}"
+  lfs_objects_bucket      = "${local.fqdn}-${var.aws_primary_region}"
   lfs_objects_logs_bucket = "${local.lfs_objects_bucket}-logs"
 }
 
 resource "aws_s3_bucket" "lfs_objects" {
-  region   = "${var.aws_default_region}"
+  region   = "${var.aws_primary_region}"
   bucket   = "${local.lfs_objects_bucket}"
   provider = "aws.primary"
   acl      = "private"
@@ -64,7 +64,7 @@ resource "aws_s3_bucket_metric" "lfs_objects" {
 }
 
 resource "aws_s3_bucket" "lfs_objects_log" {
-  region   = "${var.aws_default_region}"
+  region   = "${var.aws_primary_region}"
   bucket   = "${local.lfs_objects_logs_bucket}"
   provider = "aws.primary"
   acl      = "log-delivery-write"
