@@ -1,11 +1,3 @@
-#variable "aws_access_key" {
-#  description = "AWS access key id."
-#}
-#
-#variable "aws_secret_key" {
-#  description = "AWS secret access key."
-#}
-
 variable "aws_default_region" {
   description = "Region for s3 bucket with lfs objects."
   default     = "us-east-1"
