@@ -2,7 +2,9 @@ resource "helm_release" "redis" {
   name      = "redis"
   chart     = "stable/redis"
   namespace = "${kubernetes_namespace.gitlfs.metadata.0.name}"
+  version   = "5.1.3"
 
+  keyring       = ""
   force_update  = true
   recreate_pods = true
 
