@@ -270,7 +270,7 @@ resource "aws_iam_policy_attachment" "repl_to_primary" {
 # iam user account
 
 module "lfs_user" {
-  source = "github.com/lsst-sqre/tf_aws_iam_user"
+  source = "git::https://github.com/lsst-sqre/terraform-aws-iam-user//?ref=master"
 
   name = "${local.fqdn}-push"
 
