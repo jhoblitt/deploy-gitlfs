@@ -1,14 +1,15 @@
 output "GITLFS_FQDN" {
-  sensitive = false
-  value     = "${local.fqdn}"
+  value = "${local.fqdn}"
 }
 
 output "GITLFS_IP" {
-  sensitive = false
-  value     = "${kubernetes_service.ssl_proxy.load_balancer_ingress.0.ip}"
+  value = "${module.nginx_ingress.ingress_ip}"
 }
 
 output "GOOGLE_CONTAINER_CLUSTER" {
-  sensitive = false
-  value     = "${module.gke.id}"
+  value = "${module.gke.id}"
+}
+
+output "ingress_ip" {
+  value = "${module.nginx_ingress.ingress_ip}"
 }

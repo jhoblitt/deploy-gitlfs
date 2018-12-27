@@ -44,6 +44,14 @@ variable "google_project" {
   description = "google cloud project ID"
 }
 
+variable "tls_crt_path" {
+  description = "wildcard tls certificate."
+}
+
+variable "tls_key_path" {
+  description = "wildcard tls private key."
+}
+
 locals {
   # remove "<env>-" prefix for production
   dns_prefix = "${replace("${var.env_name}-", "prod-", "")}"
@@ -53,4 +61,6 @@ locals {
 
   fqdn                 = "${local.dns_prefix}${var.service_name}.${var.domain_name}"
   gitlfs_k8s_namespace = "gitlfs"
+  tls_crt              = "${file(var.tls_crt_path)}"
+  tls_key              = "${file(var.tls_key_path)}"
 }
