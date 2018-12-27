@@ -1,3 +1,11 @@
+provider "template" {
+  version = "~> 1.0"
+}
+
+provider "google" {
+  version = "~> 1.20"
+}
+
 module "gke" {
   source             = "git::https://github.com/lsst-sqre/terraform-gke-std.git//?ref=master"
   name               = "${local.gke_cluster_name}"
