@@ -25,7 +25,7 @@ resource "aws_s3_bucket" "lfs_objects" {
   }
 
   replication_configuration {
-    role = "${aws_iam_role.replication_to_backup.arn}"
+    role = "${aws_iam_role.repl_to_backup.arn}"
 
     rules {
       id = "replication rule"
@@ -88,7 +88,7 @@ resource "aws_s3_bucket" "lfs_objects_backup" {
   # XXX broken as aws requires the bucket to already exist
   # two way replication
   #replication_configuration {
-  #  role = "${aws_iam_role.replication_to_primary.arn}"
+  #  role = "${aws_iam_role.repl_to_primary.arn}"
 
 
   #  rules {
@@ -130,8 +130,8 @@ resource "aws_s3_bucket" "lfs_objects_backup_log" {
 # replication to backup
 #
 
-resource "aws_iam_role" "replication_to_backup" {
-  name = "${local.lfs_objects_bucket}-replication_to_backup"
+resource "aws_iam_role" "repl_to_backup" {
+  name = "${local.lfs_objects_bucket}-repl_to_backup"
 
   assume_role_policy = <<POLICY
 {
@@ -150,8 +150,8 @@ resource "aws_iam_role" "replication_to_backup" {
 POLICY
 }
 
-resource "aws_iam_policy" "replication_to_backup" {
-  name = "${aws_s3_bucket.lfs_objects.id}-replication_to_backup"
+resource "aws_iam_policy" "repl_to_backup" {
+  name = "${aws_s3_bucket.lfs_objects.id}-repl_to_backup"
 
   policy = <<POLICY
 {
@@ -190,18 +190,18 @@ resource "aws_iam_policy" "replication_to_backup" {
 POLICY
 }
 
-resource "aws_iam_policy_attachment" "replication_to_backup" {
-  name       = "${aws_s3_bucket.lfs_objects.id}-replication_to_backup"
-  roles      = ["${aws_iam_role.replication_to_backup.name}"]
-  policy_arn = "${aws_iam_policy.replication_to_backup.arn}"
+resource "aws_iam_policy_attachment" "repl_to_backup" {
+  name       = "${aws_s3_bucket.lfs_objects.id}-repl_to_backup"
+  roles      = ["${aws_iam_role.repl_to_backup.name}"]
+  policy_arn = "${aws_iam_policy.repl_to_backup.arn}"
 }
 
 #
 # replication to primary
 #
 
-resource "aws_iam_role" "replication_to_primary" {
-  name = "${local.lfs_objects_backup_bucket}-replication_to_primary"
+resource "aws_iam_role" "repl_to_primary" {
+  name = "${local.lfs_objects_backup_bucket}-repl_to_primary"
 
   assume_role_policy = <<POLICY
 {
@@ -220,8 +220,8 @@ resource "aws_iam_role" "replication_to_primary" {
 POLICY
 }
 
-resource "aws_iam_policy" "replication_to_primary" {
-  name = "${aws_s3_bucket.lfs_objects_backup.id}-replication_to_primary"
+resource "aws_iam_policy" "repl_to_primary" {
+  name = "${aws_s3_bucket.lfs_objects_backup.id}-repl_to_primary"
 
   policy = <<POLICY
 {
@@ -260,10 +260,10 @@ resource "aws_iam_policy" "replication_to_primary" {
 POLICY
 }
 
-resource "aws_iam_policy_attachment" "replication_to_primary" {
-  name       = "${aws_s3_bucket.lfs_objects.id}-replication_to_primary"
-  roles      = ["${aws_iam_role.replication_to_primary.name}"]
-  policy_arn = "${aws_iam_policy.replication_to_primary.arn}"
+resource "aws_iam_policy_attachment" "repl_to_primary" {
+  name       = "${aws_s3_bucket.lfs_objects.id}-repl_to_primary"
+  roles      = ["${aws_iam_role.repl_to_primary.name}"]
+  policy_arn = "${aws_iam_policy.repl_to_primary.arn}"
 }
 
 #
