@@ -40,16 +40,16 @@ variable "s3_force_destroy" {
   default     = false
 }
 
-# remove "<env>-" prefix for production
-data "template_file" "fqdn" {
-  template = "${replace("${var.env_name}-${var.service_name}.${var.domain_name}", "prod-", "")}"
-}
-
 variable "google_project" {
   description = "google cloud project ID"
 }
 
-# Name of google cloud container cluster to deploy into
-data "template_file" "gke_cluster_name" {
-  template = "${var.deploy_name}-${var.env_name}"
+locals {
+  # remove "<env>-" prefix for production
+  dns_prefix = "${replace("${var.env_name}-", "prod-", "")}"
+
+  # Name of google cloud container cluster to deploy into
+  gke_cluster_name = "${var.deploy_name}-${var.env_name}"
+
+  fqdn = "${local.dns_prefix}${var.service_name}.${var.domain_name}"
 }

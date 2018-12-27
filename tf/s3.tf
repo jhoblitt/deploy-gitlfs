@@ -15,15 +15,16 @@ provider "aws" {
 # primary bucket
 #
 
-# a template is needed to stay DRY while avoiding circular references between
+# a local is needed to stay DRY while avoiding circular references between
 # the object and log buckets
-data "template_file" "lfs_objects" {
-  template = "${data.template_file.fqdn.rendered}-${var.aws_default_region}"
+locals {
+  lfs_objects_bucket      = "${local.fqdn}-${var.aws_default_region}"
+  lfs_objects_logs_bucket = "${local.lfs_objects_bucket}-logs"
 }
 
 resource "aws_s3_bucket" "lfs_objects" {
   region   = "${var.aws_default_region}"
-  bucket   = "${data.template_file.lfs_objects.rendered}"
+  bucket   = "${local.lfs_objects_bucket}"
   provider = "aws.primary"
   acl      = "private"
 
@@ -64,7 +65,7 @@ resource "aws_s3_bucket_metric" "lfs_objects" {
 
 resource "aws_s3_bucket" "lfs_objects_log" {
   region   = "${var.aws_default_region}"
-  bucket   = "${data.template_file.lfs_objects.rendered}-logs"
+  bucket   = "${local.lfs_objects_logs_bucket}"
   provider = "aws.primary"
   acl      = "log-delivery-write"
 
@@ -75,13 +76,16 @@ resource "aws_s3_bucket" "lfs_objects_log" {
 # replication / backup bucket
 #
 
-data "template_file" "lfs_objects_backup" {
-  template = "${data.template_file.fqdn.rendered}-${var.aws_backup_region}"
+# a local is needed to stay DRY while avoiding circular references between
+# the object and log buckets
+locals {
+  lfs_objects_backup_bucket      = "${local.fqdn}-${var.aws_backup_region}"
+  lfs_objects_backup_logs_bucket = "${local.lfs_objects_backup_bucket}-logs"
 }
 
 resource "aws_s3_bucket" "lfs_objects_backup" {
   region   = "${var.aws_backup_region}"
-  bucket   = "${data.template_file.lfs_objects_backup.rendered}"
+  bucket   = "${local.lfs_objects_backup_bucket}"
   provider = "aws.backup"
   acl      = "private"
 
@@ -95,6 +99,7 @@ resource "aws_s3_bucket" "lfs_objects_backup" {
   }
 
   # XXX broken as aws requires the bucket to already exist
+  # two way replication
   #replication_configuration {
   #  role = "${aws_iam_role.replication_to_primary.arn}"
 
@@ -110,7 +115,7 @@ resource "aws_s3_bucket" "lfs_objects_backup" {
   #      # "${aws_s3_bucket.lfs_objects.arn}" would create a circular reference.
   #      # See https://github.com/terraform-providers/terraform-provider-aws/issues/749
   #      # so the arn has to be manually constructed
-  #      bucket        = "arn:aws:s3:::${data.template_file.lfs_objects.rendered}"
+  #      bucket        = "arn:aws:s3:::${local.lfs_objects_bucket}"
   #      storage_class = "STANDARD"
   #    }
   #  }
@@ -127,7 +132,7 @@ resource "aws_s3_bucket_metric" "lfs_objects_backup" {
 
 resource "aws_s3_bucket" "lfs_objects_backup_log" {
   region   = "${var.aws_backup_region}"
-  bucket   = "${data.template_file.lfs_objects_backup.rendered}-logs"
+  bucket   = "${local.lfs_objects_backup_logs_bucket}-logs"
   provider = "aws.backup"
   acl      = "log-delivery-write"
 
@@ -139,7 +144,7 @@ resource "aws_s3_bucket" "lfs_objects_backup_log" {
 #
 
 resource "aws_iam_role" "replication_to_backup" {
-  name = "${data.template_file.lfs_objects.rendered}-replication_to_backup"
+  name = "${local.lfs_objects_bucket}-replication_to_backup"
 
   assume_role_policy = <<POLICY
 {
@@ -209,7 +214,7 @@ resource "aws_iam_policy_attachment" "replication_to_backup" {
 #
 
 resource "aws_iam_role" "replication_to_primary" {
-  name = "${data.template_file.lfs_objects_backup.rendered}-replication_to_primary"
+  name = "${local.lfs_objects_backup_bucket}-replication_to_primary"
 
   assume_role_policy = <<POLICY
 {
@@ -280,7 +285,7 @@ resource "aws_iam_policy_attachment" "replication_to_primary" {
 module "lfs_user" {
   source = "github.com/lsst-sqre/tf_aws_iam_user"
 
-  name = "${data.template_file.fqdn.rendered}-push"
+  name = "${local.fqdn}-push"
 
   policy = <<EOF
 {

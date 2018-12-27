@@ -1,6 +1,6 @@
 output "GITLFS_FQDN" {
   sensitive = false
-  value     = "${data.template_file.fqdn.rendered}"
+  value     = "${local.fqdn}"
 }
 
 output "GITLFS_IP" {
