@@ -1,7 +1,3 @@
-provider "template" {
-  version = "~> 1.0"
-}
-
 module "gke" {
   source             = "github.com/lsst-sqre/terraform-gke-std"
   name               = "${local.gke_cluster_name}"
