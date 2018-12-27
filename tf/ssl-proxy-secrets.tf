@@ -1,7 +1,7 @@
 resource "kubernetes_secret" "ssl_proxy" {
   metadata {
     name      = "ssl-proxy-secret"
-    namespace = "gitlfs"
+    namespace = "${kubernetes_namespace.gitlfs.metadata.0.name}"
   }
 
   data {

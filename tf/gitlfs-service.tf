@@ -1,7 +1,7 @@
 resource "kubernetes_service" "gitlfs" {
   metadata {
     name      = "gitlfs"
-    namespace = "gitlfs"
+    namespace = "${kubernetes_namespace.gitlfs.metadata.0.name}"
 
     labels {
       name = "gitlfs"

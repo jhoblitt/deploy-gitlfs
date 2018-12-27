@@ -1,7 +1,7 @@
 resource "kubernetes_replication_controller" "gitlfs" {
   metadata {
-    namespace = "gitlfs"
     name      = "gitlfs"
+    namespace = "${kubernetes_namespace.gitlfs.metadata.0.name}"
 
     labels {
       name = "gitlfs"

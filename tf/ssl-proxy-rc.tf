@@ -1,7 +1,7 @@
 resource "kubernetes_replication_controller" "ssl_proxy" {
   metadata {
-    namespace = "gitlfs"
     name      = "nginx-ssl-proxy"
+    namespace = "${kubernetes_namespace.gitlfs.metadata.0.name}"
 
     labels {
       name = "nginx-ssl-proxy"

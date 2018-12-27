@@ -51,5 +51,6 @@ locals {
   # Name of google cloud container cluster to deploy into
   gke_cluster_name = "${var.deploy_name}-${var.env_name}"
 
-  fqdn = "${local.dns_prefix}${var.service_name}.${var.domain_name}"
+  fqdn                 = "${local.dns_prefix}${var.service_name}.${var.domain_name}"
+  gitlfs_k8s_namespace = "gitlfs"
 }
