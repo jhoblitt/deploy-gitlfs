@@ -40,6 +40,11 @@ variable "deploy_name" {
   default     = "git-lfs"
 }
 
+variable "dns_enable" {
+  description = "create route53 dns records."
+  default     = false
+}
+
 # remove "<env>-" prefix for production
 data "template_file" "fqdn" {
   template = "${replace("${var.env_name}-${var.service_name}.${var.domain_name}", "prod-", "")}"
