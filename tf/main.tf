@@ -29,11 +29,21 @@ provider "aws" {
   alias   = "backup"
 }
 
+module "tiller" {
+  source          = "git::https://github.com/lsst-sqre/terraform-tinfoil-tiller.git//?ref=master"
+  namespace       = "kube-system"
+  service_account = "tiller"
+}
+
 provider "helm" {
+  version = "~> 0.6.2"
+
+  service_account = "${module.tiller.service_account}"
+  namespace       = "${module.tiller.namespace}"
+  install_tiller  = false
+
   kubernetes {
     host                   = "${module.gke.host}"
-    client_certificate     = "${base64decode(module.gke.client_certificate)}"
-    client_key             = "${base64decode(module.gke.client_key)}"
     cluster_ca_certificate = "${base64decode(module.gke.cluster_ca_certificate)}"
   }
 }
