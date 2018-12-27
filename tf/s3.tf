@@ -53,7 +53,7 @@ resource "aws_s3_bucket" "lfs_objects" {
     }
   }
 
-  force_destroy = false
+  force_destroy = "${var.s3_force_destroy}"
 }
 
 resource "aws_s3_bucket_metric" "lfs_objects" {
@@ -68,7 +68,7 @@ resource "aws_s3_bucket" "lfs_objects_log" {
   provider = "aws.primary"
   acl      = "log-delivery-write"
 
-  force_destroy = false
+  force_destroy = "${var.s3_force_destroy}"
 }
 
 #
@@ -116,7 +116,7 @@ resource "aws_s3_bucket" "lfs_objects_backup" {
   #  }
   #}
 
-  force_destroy = false
+  force_destroy = "${var.s3_force_destroy}"
 }
 
 resource "aws_s3_bucket_metric" "lfs_objects_backup" {
@@ -131,7 +131,7 @@ resource "aws_s3_bucket" "lfs_objects_backup_log" {
   provider = "aws.backup"
   acl      = "log-delivery-write"
 
-  force_destroy = false
+  force_destroy = "${var.s3_force_destroy}"
 }
 
 #

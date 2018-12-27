@@ -45,6 +45,11 @@ variable "dns_enable" {
   default     = false
 }
 
+variable "s3_force_destroy" {
+  description = "Destroy aws s3 buckets, even if they still contain objects."
+  default     = false
+}
+
 # remove "<env>-" prefix for production
 data "template_file" "fqdn" {
   template = "${replace("${var.env_name}-${var.service_name}.${var.domain_name}", "prod-", "")}"
