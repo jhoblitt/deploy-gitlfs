@@ -8,7 +8,7 @@ module "gke" {
 }
 
 provider "kubernetes" {
-  version = "~> 1.4"
+  version = "1.3.0-custom"
 
   load_config_file = true
 
