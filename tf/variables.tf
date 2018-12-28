@@ -21,7 +21,7 @@ variable "domain_name" {
 }
 
 variable "service_name" {
-  description = "service / unqualifed hostname"
+  description = "service / unqualified hostname"
   default     = "git-lfs"
 }
 
