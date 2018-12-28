@@ -2,6 +2,8 @@
 
 set -e
 
+#export GIT_TRACE=1
+
 print_error() {
   >&2 echo -e "$@"
 }
