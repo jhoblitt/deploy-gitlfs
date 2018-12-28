@@ -61,6 +61,11 @@ variable "github_org" {
   description = "GitHub Organization used for authorization."
 }
 
+variable "replicas" {
+  description = "Number of instances of the gitlfs server (pods) to run."
+  default     = 3
+}
+
 locals {
   # remove "<env>-" prefix for production
   dns_prefix = "${replace("${var.env_name}-", "prod-", "")}"

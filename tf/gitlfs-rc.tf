@@ -10,7 +10,7 @@ resource "kubernetes_replication_controller" "gitlfs" {
   }
 
   spec {
-    replicas = 1
+    replicas = "${var.replicas}"
 
     selector {
       name = "gitlfs"
