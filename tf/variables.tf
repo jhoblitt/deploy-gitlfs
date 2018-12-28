@@ -52,6 +52,11 @@ variable "tls_key_path" {
   description = "wildcard tls private key."
 }
 
+variable "gitlfs_image" {
+  description = "gitlfs server docker image."
+  default     = "docker.io/lsstsqre/gitlfs-server:gbbed4bd"
+}
+
 locals {
   # remove "<env>-" prefix for production
   dns_prefix = "${replace("${var.env_name}-", "prod-", "")}"

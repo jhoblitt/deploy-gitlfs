@@ -20,7 +20,7 @@ resource "kubernetes_replication_controller" "gitlfs" {
     template {
       container {
         name              = "gitlfs"
-        image             = "docker.io/lsstsqre/gitlfs-server:gbbed4bd"
+        image             = "${var.gitlfs_image}"
         image_pull_policy = "Always"
 
         port {
