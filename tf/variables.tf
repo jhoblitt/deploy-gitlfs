@@ -57,6 +57,10 @@ variable "gitlfs_image" {
   default     = "docker.io/lsstsqre/gitlfs-server:gbbed4bd"
 }
 
+variable "github_org" {
+  description = "GitHub Organization used for authorization."
+}
+
 locals {
   # remove "<env>-" prefix for production
   dns_prefix = "${replace("${var.env_name}-", "prod-", "")}"

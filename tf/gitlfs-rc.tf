@@ -93,6 +93,11 @@ resource "kubernetes_replication_controller" "gitlfs" {
           value = "$(REDIS_MASTER_SERVICE_PORT)"
         }
 
+        env {
+          name  = "LFS_GITHUB_ORG"
+          value = "${var.github_org}
+        }
+
         volume_mount {
           name       = "nginx-logs"
           mount_path = "/var/log/nginx"
