@@ -69,7 +69,7 @@ lfsfile() {
   git add "$filename"
   git commit -m'add lfs test file'
 
-  TEST_FILES+=( $filename )
+  TEST_FILES+=( "$filename" )
 }
 
 gitlfs_fqdn() {
