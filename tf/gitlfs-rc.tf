@@ -95,7 +95,7 @@ resource "kubernetes_replication_controller" "gitlfs" {
 
         env {
           name  = "LFS_GITHUB_ORG"
-          value = "${var.github_org}
+          value = "${var.github_org}"
         }
 
         volume_mount {
