@@ -116,6 +116,8 @@ mkdir -p "$PUSH_DIR"
   # don't expand ! in string
   set +o histexpand
   git config --local credential.helper "!f() { cat > /dev/null; echo username=${GITHUB_USER}; echo password=${GITHUB_PASS}; }; f"
+  # bogus remote; required to push lfs objects
+  git remote add origin https://example.org
   git lfs push origin master
 )
 
