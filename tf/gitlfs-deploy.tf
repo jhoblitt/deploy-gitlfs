@@ -58,6 +58,29 @@ resource "kubernetes_deployment" "gitlfs" {
             }
           }
 
+          # https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = "80"
+            }
+
+            initial_delay_seconds = "30"
+            timeout_seconds       = "5"
+            period_seconds        = "10"
+          }
+
+          readiness_probe {
+            http_get {
+              path = "/"
+              port = "80"
+            }
+
+            initial_delay_seconds = "1"
+            timeout_seconds       = "2"
+            period_seconds        = "10"
+          }
+
           env {
             name = "AWS_ACCESS_KEY_ID"
 
