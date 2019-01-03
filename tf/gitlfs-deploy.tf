@@ -45,6 +45,19 @@ resource "kubernetes_deployment" "gitlfs" {
             container_port = 80
           }
 
+          # https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container
+          resources {
+            limits {
+              cpu    = "0.5"
+              memory = "512Mi"
+            }
+
+            requests {
+              cpu    = "0.25"
+              memory = "256Mi"
+            }
+          }
+
           env {
             name = "AWS_ACCESS_KEY_ID"
 
