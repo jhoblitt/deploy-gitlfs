@@ -17,6 +17,15 @@ resource "kubernetes_deployment" "gitlfs" {
       app  = "gitlfs"
     }
 
+    strategy {
+      type = "RollingUpdate"
+
+      rolling_update {
+        max_surge       = "${ceil(var.replicas * 1.5)}"
+        max_unavailable = "${floor(var.replicas * 0.5)}"
+      }
+    }
+
     template {
       metadata {
         labels {
