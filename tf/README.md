@@ -25,10 +25,10 @@
 
 | Name | Description |
 |------|-------------|
-| gitlfs\_fqdn |  |
-| gitlfs\_ip |  |
-| gitlfs\_url |  |
-| google\_container\_cluster |  |
-| ingress\_ip |  |
+| gitlfs\_fqdn | FQDN of gitlfs service. |
+| gitlfs\_ip | IP of gitlfs service. |
+| gitlfs\_url | URL of gitlfs service. |
+| google\_container\_cluster | Name of gke cluster created for gitlfs service. |
+| ingress\_ip | IP of nginx-ingress service. |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
