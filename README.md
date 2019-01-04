@@ -3,13 +3,12 @@ deployment for git-lfs
 
 [![Build Status](https://travis-ci.org/lsst-sqre/deploy-gitlfs.png)](https://travis-ci.org/lsst-sqre/deploy-gitlfs)
 
-tl;dr
+This is a "root" module which declares providers and is not intended to be used
+for composition.
+
+Usage
 ---
 
-    . creds.sh
+### terragrunt
 
-    cd tf
-    make tf-init-s3
-    make tls
-    ./bin/terraform plan
-    ./bin/terraform apply
+Example terragrunt [`terraform.tfvars`](https://github.com/lsst-sqre/terragrunt-live-test/blob/master/jhoblitt/gitlfs/terraform.tfvars)
