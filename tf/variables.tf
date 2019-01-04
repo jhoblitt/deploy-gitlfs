@@ -54,7 +54,7 @@ variable "tls_key_path" {
 
 variable "gitlfs_image" {
   description = "gitlfs server docker image."
-  default     = "docker.io/lsstsqre/gitlfs-server:ge79f107"
+  default     = "docker.io/lsstsqre/gitlfs-server:g7562fb8"
 }
 
 variable "github_org" {
