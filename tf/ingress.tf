@@ -21,12 +21,6 @@ resource "kubernetes_ingress" "gitlfs" {
       "nginx.ingress.kubernetes.io/proxy-body-size" = "0m"
       "nginx.ingress.kubernetes.io/ssl-redirect"    = "true"
       "nginx.ingress.kubernetes.io/rewrite-target"  = "/"
-
-      "nginx.ingress.kubernetes.io/configuration-snippet" = <<INGRESS
-proxy_set_header X-Forwarded-Proto https;
-proxy_set_header X-Forwarded-Port 443;
-proxy_set_header X-Forwarded-Path /;
-INGRESS
     }
   }
 
