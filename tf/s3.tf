@@ -1,29 +1,17 @@
-provider "aws" {
-  version = "~> 1.21"
-  region  = "${var.aws_default_region}"
-  alias   = "primary"
-}
-
-provider "aws" {
-  # providers are initialized early and can't use a local var to DRY version
-  version = "~> 1.21"
-  region  = "${var.aws_backup_region}"
-  alias   = "backup"
-}
-
 #
 # primary bucket
 #
 
-# a template is needed to stay DRY while avoiding circular references between
+# a local is needed to stay DRY while avoiding circular references between
 # the object and log buckets
-data "template_file" "lfs_objects" {
-  template = "${data.template_file.fqdn.rendered}-${var.aws_default_region}"
+locals {
+  lfs_objects_bucket      = "${local.fqdn}-${var.aws_primary_region}"
+  lfs_objects_logs_bucket = "${local.lfs_objects_bucket}-logs"
 }
 
 resource "aws_s3_bucket" "lfs_objects" {
-  region   = "${var.aws_default_region}"
-  bucket   = "${data.template_file.lfs_objects.rendered}"
+  region   = "${var.aws_primary_region}"
+  bucket   = "${local.lfs_objects_bucket}"
   provider = "aws.primary"
   acl      = "private"
 
@@ -37,7 +25,7 @@ resource "aws_s3_bucket" "lfs_objects" {
   }
 
   replication_configuration {
-    role = "${aws_iam_role.replication_to_backup.arn}"
+    role = "${aws_iam_role.repl_to_backup.arn}"
 
     rules {
       id = "replication rule"
@@ -53,7 +41,7 @@ resource "aws_s3_bucket" "lfs_objects" {
     }
   }
 
-  force_destroy = false
+  force_destroy = "${var.s3_force_destroy}"
 }
 
 resource "aws_s3_bucket_metric" "lfs_objects" {
@@ -63,25 +51,28 @@ resource "aws_s3_bucket_metric" "lfs_objects" {
 }
 
 resource "aws_s3_bucket" "lfs_objects_log" {
-  region   = "${var.aws_default_region}"
-  bucket   = "${data.template_file.lfs_objects.rendered}-logs"
+  region   = "${var.aws_primary_region}"
+  bucket   = "${local.lfs_objects_logs_bucket}"
   provider = "aws.primary"
   acl      = "log-delivery-write"
 
-  force_destroy = false
+  force_destroy = "${var.s3_force_destroy}"
 }
 
 #
 # replication / backup bucket
 #
 
-data "template_file" "lfs_objects_backup" {
-  template = "${data.template_file.fqdn.rendered}-${var.aws_backup_region}"
+# a local is needed to stay DRY while avoiding circular references between
+# the object and log buckets
+locals {
+  lfs_objects_backup_bucket      = "${local.fqdn}-${var.aws_backup_region}"
+  lfs_objects_backup_logs_bucket = "${local.lfs_objects_backup_bucket}-logs"
 }
 
 resource "aws_s3_bucket" "lfs_objects_backup" {
   region   = "${var.aws_backup_region}"
-  bucket   = "${data.template_file.lfs_objects_backup.rendered}"
+  bucket   = "${local.lfs_objects_backup_bucket}"
   provider = "aws.backup"
   acl      = "private"
 
@@ -95,8 +86,9 @@ resource "aws_s3_bucket" "lfs_objects_backup" {
   }
 
   # XXX broken as aws requires the bucket to already exist
+  # two way replication
   #replication_configuration {
-  #  role = "${aws_iam_role.replication_to_primary.arn}"
+  #  role = "${aws_iam_role.repl_to_primary.arn}"
 
 
   #  rules {
@@ -110,13 +102,13 @@ resource "aws_s3_bucket" "lfs_objects_backup" {
   #      # "${aws_s3_bucket.lfs_objects.arn}" would create a circular reference.
   #      # See https://github.com/terraform-providers/terraform-provider-aws/issues/749
   #      # so the arn has to be manually constructed
-  #      bucket        = "arn:aws:s3:::${data.template_file.lfs_objects.rendered}"
+  #      bucket        = "arn:aws:s3:::${local.lfs_objects_bucket}"
   #      storage_class = "STANDARD"
   #    }
   #  }
   #}
 
-  force_destroy = false
+  force_destroy = "${var.s3_force_destroy}"
 }
 
 resource "aws_s3_bucket_metric" "lfs_objects_backup" {
@@ -127,19 +119,19 @@ resource "aws_s3_bucket_metric" "lfs_objects_backup" {
 
 resource "aws_s3_bucket" "lfs_objects_backup_log" {
   region   = "${var.aws_backup_region}"
-  bucket   = "${data.template_file.lfs_objects_backup.rendered}-logs"
+  bucket   = "${local.lfs_objects_backup_logs_bucket}-logs"
   provider = "aws.backup"
   acl      = "log-delivery-write"
 
-  force_destroy = false
+  force_destroy = "${var.s3_force_destroy}"
 }
 
 #
 # replication to backup
 #
 
-resource "aws_iam_role" "replication_to_backup" {
-  name = "${data.template_file.lfs_objects.rendered}-replication_to_backup"
+resource "aws_iam_role" "repl_to_backup" {
+  name = "${local.lfs_objects_bucket}-repl_to_backup"
 
   assume_role_policy = <<POLICY
 {
@@ -158,8 +150,8 @@ resource "aws_iam_role" "replication_to_backup" {
 POLICY
 }
 
-resource "aws_iam_policy" "replication_to_backup" {
-  name = "${aws_s3_bucket.lfs_objects.id}-replication_to_backup"
+resource "aws_iam_policy" "repl_to_backup" {
+  name = "${aws_s3_bucket.lfs_objects.id}-repl_to_backup"
 
   policy = <<POLICY
 {
@@ -198,18 +190,18 @@ resource "aws_iam_policy" "replication_to_backup" {
 POLICY
 }
 
-resource "aws_iam_policy_attachment" "replication_to_backup" {
-  name       = "${aws_s3_bucket.lfs_objects.id}-replication_to_backup"
-  roles      = ["${aws_iam_role.replication_to_backup.name}"]
-  policy_arn = "${aws_iam_policy.replication_to_backup.arn}"
+resource "aws_iam_policy_attachment" "repl_to_backup" {
+  name       = "${aws_s3_bucket.lfs_objects.id}-repl_to_backup"
+  roles      = ["${aws_iam_role.repl_to_backup.name}"]
+  policy_arn = "${aws_iam_policy.repl_to_backup.arn}"
 }
 
 #
 # replication to primary
 #
 
-resource "aws_iam_role" "replication_to_primary" {
-  name = "${data.template_file.lfs_objects_backup.rendered}-replication_to_primary"
+resource "aws_iam_role" "repl_to_primary" {
+  name = "${local.lfs_objects_backup_bucket}-repl_to_primary"
 
   assume_role_policy = <<POLICY
 {
@@ -228,8 +220,8 @@ resource "aws_iam_role" "replication_to_primary" {
 POLICY
 }
 
-resource "aws_iam_policy" "replication_to_primary" {
-  name = "${aws_s3_bucket.lfs_objects_backup.id}-replication_to_primary"
+resource "aws_iam_policy" "repl_to_primary" {
+  name = "${aws_s3_bucket.lfs_objects_backup.id}-repl_to_primary"
 
   policy = <<POLICY
 {
@@ -268,19 +260,19 @@ resource "aws_iam_policy" "replication_to_primary" {
 POLICY
 }
 
-resource "aws_iam_policy_attachment" "replication_to_primary" {
-  name       = "${aws_s3_bucket.lfs_objects.id}-replication_to_primary"
-  roles      = ["${aws_iam_role.replication_to_primary.name}"]
-  policy_arn = "${aws_iam_policy.replication_to_primary.arn}"
+resource "aws_iam_policy_attachment" "repl_to_primary" {
+  name       = "${aws_s3_bucket.lfs_objects.id}-repl_to_primary"
+  roles      = ["${aws_iam_role.repl_to_primary.name}"]
+  policy_arn = "${aws_iam_policy.repl_to_primary.arn}"
 }
 
 #
 # iam user account
 
 module "lfs_user" {
-  source = "github.com/lsst-sqre/tf_aws_iam_user"
+  source = "git::https://github.com/lsst-sqre/terraform-aws-iam-user//?ref=master"
 
-  name = "${data.template_file.fqdn.rendered}-push"
+  name = "${local.fqdn}-push"
 
   policy = <<EOF
 {

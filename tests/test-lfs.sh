@@ -2,6 +2,8 @@
 
 set -e
 
+#export GIT_TRACE=1
+
 print_error() {
   >&2 echo -e "$@"
 }
@@ -67,7 +69,7 @@ lfsfile() {
   git add "$filename"
   git commit -m'add lfs test file'
 
-  TEST_FILES+=( $filename )
+  TEST_FILES+=( "$filename" )
 }
 
 gitlfs_fqdn() {
@@ -116,6 +118,8 @@ mkdir -p "$PUSH_DIR"
   # don't expand ! in string
   set +o histexpand
   git config --local credential.helper "!f() { cat > /dev/null; echo username=${GITHUB_USER}; echo password=${GITHUB_PASS}; }; f"
+  # bogus remote; required to push lfs objects
+  git remote add origin https://example.org
   git lfs push origin master
 )
 

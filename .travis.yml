@@ -9,16 +9,10 @@ matrix:
         - docker
       script: ./tests/mdl.sh
 
-    - env: TEST=make
-      language: c
-      script: ./tests/make.sh
-
     - env: TEST=terraform
-      language: c
-      script: |
-       set -e
-       cd tf
-       make test
+      services:
+        - docker
+      script: cd tf; ../tests/terraform.sh
 
     - env: TEST=yamllint
       language: c

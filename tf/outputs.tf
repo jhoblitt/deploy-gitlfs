@@ -1,14 +1,24 @@
-output "GITLFS_FQDN" {
-  sensitive = false
-  value     = "${data.template_file.fqdn.rendered}"
+output "gitlfs_fqdn" {
+  description = "FQDN of gitlfs service."
+  value       = "${local.fqdn}"
 }
 
-output "GITLFS_IP" {
-  sensitive = false
-  value     = "${kubernetes_service.ssl_proxy.load_balancer_ingress.0.ip}"
+output "gitlfs_ip" {
+  description = "IP of gitlfs service."
+  value       = "${module.nginx_ingress.ingress_ip}"
 }
 
-output "GOOGLE_CONTAINER_CLUSTER" {
-  sensitive = false
-  value     = "${module.gke.id}"
+output "gitlfs_url" {
+  description = "URL of gitlfs service."
+  value       = "https://${local.fqdn}"
+}
+
+output "google_container_cluster" {
+  description = "Name of gke cluster created for gitlfs service."
+  value       = "${module.gke.id}"
+}
+
+output "ingress_ip" {
+  description = "IP of nginx-ingress service."
+  value       = "${module.nginx_ingress.ingress_ip}"
 }
