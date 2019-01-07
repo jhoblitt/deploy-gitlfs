@@ -119,7 +119,7 @@ resource "aws_s3_bucket_metric" "lfs_objects_backup" {
 
 resource "aws_s3_bucket" "lfs_objects_backup_log" {
   region   = "${var.aws_backup_region}"
-  bucket   = "${local.lfs_objects_backup_logs_bucket}-logs"
+  bucket   = "${local.lfs_objects_backup_logs_bucket}"
   provider = "aws.backup"
   acl      = "log-delivery-write"
 
