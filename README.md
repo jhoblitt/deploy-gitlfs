@@ -1,7 +1,7 @@
 deployment for git-lfs
 ===
 
-[![Build Status](https://travis-ci.org/lsst-sqre/deploy-gitlfs.png)](https://travis-ci.org/lsst-sqre/deploy-gitlfs)
+[![Build Status](https://travis-ci.org/lsst-sqre/terraform-gitlfs.png)](https://travis-ci.org/lsst-sqre/terraform-gitlfs)
 
 This is a "root" module which declares providers and is not intended to be used
 for composition.
