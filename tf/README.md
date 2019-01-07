@@ -13,7 +13,7 @@
 | domain\_name | DNS domain name to use when creating route53 records. | string | n/a | yes |
 | env\_name | AWS tag name to use on resources. | string | n/a | yes |
 | github\_org | GitHub Organization used for authorization. | string | n/a | yes |
-| gitlfs\_image | gitlfs server docker image. | string | `"docker.io/lsstsqre/gitlfs-server:g7562fb8"` | no |
+| gitlfs\_image | gitlfs server docker image. | string | `"docker.io/lsstsqre/gitlfs-server:gf8df52a"` | no |
 | google\_project | google cloud project ID | string | n/a | yes |
 | replicas | Number of instances of the gitlfs server (pods) to run. | string | `"3"` | no |
 | s3\_force\_destroy | Destroy aws s3 buckets, even if they still contain objects. | string | `"false"` | no |
