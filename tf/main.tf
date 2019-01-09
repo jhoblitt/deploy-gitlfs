@@ -46,6 +46,11 @@ provider "kubernetes" {
 provider "aws" {
   version = "~> 1.54"
   region  = "${var.aws_primary_region}"
+}
+
+provider "aws" {
+  version = "~> 1.54"
+  region  = "${var.aws_primary_region}"
   alias   = "primary"
 }
 
