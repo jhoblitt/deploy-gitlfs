@@ -4,7 +4,6 @@ language: c
 matrix:
   include:
     - env: TEST=markdownlint
-      language: c
       services:
         - docker
       script: ./tests/mdl.sh
@@ -15,13 +14,11 @@ matrix:
       script: cd tf; ../tests/terraform.sh
 
     - env: TEST=yamllint
-      language: c
       services:
         - docker
       script: ./tests/yamllint.sh
 
     - env: TEST=shellcheck
-      language: c
       services:
         - docker
       script: ./tests/shellcheck.sh
