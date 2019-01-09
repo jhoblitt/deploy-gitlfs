@@ -3,7 +3,7 @@
 set -e
 shopt -s globstar nullglob
 
-TF_VER="0.11.10"
+TF_VER="0.11.11"
 
 tf() {
   docker run -ti -v "$(pwd):$(pwd)" -w "$(pwd)" "hashicorp/terraform:${TF_VER}" "$@"
