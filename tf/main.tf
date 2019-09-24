@@ -11,7 +11,7 @@ provider "null" {
 }
 
 module "gke" {
-  source = "git::https://github.com/lsst-sqre/terraform-gke-std.git//?ref=master"
+  source = "git::https://github.com/lsst-sqre/terraform-gke-std.git//?ref=3.x"
 
   name               = "${local.gke_cluster_name}"
   google_project     = "${var.google_project}"
