@@ -66,6 +66,11 @@ variable "replicas" {
   default     = 3
 }
 
+variable "gke_version" {
+  description = "gke master/node version"
+  default     = "latest"
+}
+
 locals {
   # remove "<env>-" prefix for production
   dns_prefix = "${replace("${var.env_name}-", "prod-", "")}"
