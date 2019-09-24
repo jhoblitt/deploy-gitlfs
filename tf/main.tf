@@ -3,7 +3,11 @@ provider "template" {
 }
 
 provider "google" {
-  version = "~> 1.20"
+  version = "~> 2.7.0"
+
+  project = "${var.google_project}"
+  region  = "${var.google_region}"
+  zone    = "${var.google_zone}"
 }
 
 provider "null" {
@@ -11,11 +15,10 @@ provider "null" {
 }
 
 module "gke" {
-  source = "git::https://github.com/lsst-sqre/terraform-gke-std.git//?ref=master"
+  source = "git::https://github.com/lsst-sqre/terraform-gke-std.git//?ref=3.x"
 
   name               = "${local.gke_cluster_name}"
-  google_project     = "${var.google_project}"
-  gke_version        = "latest"
+  gke_version        = "${var.gke_version}"
   initial_node_count = 3
   machine_type       = "n1-standard-1"
 }

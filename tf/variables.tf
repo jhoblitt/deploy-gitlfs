@@ -44,6 +44,16 @@ variable "google_project" {
   description = "google cloud project ID"
 }
 
+variable "google_region" {
+  description = "google cloud region"
+  default     = "us-central1"
+}
+
+variable "google_zone" {
+  description = "google cloud region/zone"
+  default     = "us-central1-b"
+}
+
 variable "tls_crt_path" {
   description = "wildcard tls certificate."
 }
@@ -64,6 +74,11 @@ variable "github_org" {
 variable "replicas" {
   description = "Number of instances of the gitlfs server (pods) to run."
   default     = 3
+}
+
+variable "gke_version" {
+  description = "gke master/node version"
+  default     = "latest"
 }
 
 locals {
