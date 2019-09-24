@@ -16,6 +16,8 @@
 | gitlfs\_image | gitlfs server docker image. | string | `"docker.io/lsstsqre/gitlfs-server:gf8df52a"` | no |
 | gke\_version | gke master/node version | string | `"latest"` | no |
 | google\_project | google cloud project ID | string | n/a | yes |
+| google\_region | google cloud region | string | `"us-central1"` | no |
+| google\_zone | google cloud region/zone | string | `"us-central1-b"` | no |
 | replicas | Number of instances of the gitlfs server (pods) to run. | string | `"3"` | no |
 | s3\_force\_destroy | Destroy aws s3 buckets, even if they still contain objects. | string | `"false"` | no |
 | service\_name | service / unqualified hostname | string | `"git-lfs"` | no |
